@@ -1,0 +1,6 @@
+pymupdf
+openai
+google-generativeai
+anthropic
+cohere
+requests

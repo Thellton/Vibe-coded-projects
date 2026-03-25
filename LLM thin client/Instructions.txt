@@ -1,0 +1,8 @@
+Launch a terminal in the LLM Thin Client's Directory (ie where main.py is stored)
+Create a VENV for Python: python -m venv LLM-thin-client
+Activate the VENV (windows): .\venv\Scripts\activate
+activate the VENV (Linux/Mac): source venv/bin/activate
+Install the requirements.txt: pip install -r requirements.txt
+Launch main.py by typing in the terminal (windows): python ./main.py
+Launch main.py by typing in the terminal (linux/mac): python main.py  
+
