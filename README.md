@@ -12,4 +12,4 @@ the third is a simple tkinter based LLM chat interface. there were a number of f
 
 the third program of these three, to me is the most interesting. it took me a month to arrive at a functioning form of that project in the form of a procedural code form (I never really got object oriented coding when I first tried it back in 2012). when I was working on this with GPT-4 before it was replaced by GPT-4o, by the end of the month, GPT-4o was ignoring instructions and attempting to rewrite the program to be object oriented. at the time, it seems it could tell the program was basically spaghetti code with a bad code smell, but it took the transition from 4 to 4o for ChatGPT to actually stop and essentially say "hey... this is an unmanageable mess... we need to fix that."
 
-anyway, it took one month to write the procedural coded version through back and forth conversation with GPT-4, it took one day for GPT-4o to convert it to object oriented. 
+anyway, it took one month to write the procedural coded version through back and forth conversation with GPT-4 and frequent context hopping; it took one day for GPT-4o to convert it to object oriented. 
