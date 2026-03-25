@@ -1,0 +1,256 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="650"
+        x:Class="PerfCalcV2.MainWindow"
+        Title="LLM Performance Calculator">
+    <TabControl Margin="10">
+        <!-- ========================== -->
+        <!-- TAB 1: RAM BANDWIDTH       -->
+        <!-- ========================== -->
+         <TabItem Header="RAM Bandwidth">
+            <StackPanel Spacing="10" Margin="20">
+                <TextBlock Text="Calculate memory bandwidth from hardware specs." FontStyle="Italic"/>
+
+                <Label Content="Bus Width (bits):"/>
+                <TextBox x:Name="RamBusWidthBox" Watermark="e.g., 384"/>
+
+                <Label Content="Memory Clock Speed (MT/s):"/>
+                <TextBox x:Name="RamClockBox" Watermark="e.g., 21000"/>
+
+                <Label Content="Memory Channels:"/>
+                <TextBox x:Name="RamChannelsBox" Text="1" Watermark="e.g., 1 or 2"/>
+
+                <Button Content="Calculate Bandwidth" 
+                        Click="OnCalculateRamClick" 
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Center"/>
+
+                <TextBlock x:Name="RamResultLabel" 
+                           FontSize="16" 
+                           FontWeight="Bold" 
+                           Foreground="Green"
+                           Margin="0,10,0,0"/>
+            </StackPanel>
+        </TabItem>
+
+        <!-- ========================== -->
+        <!-- TAB 2: FLOPS CALCULATOR    -->
+        <!-- ========================== -->
+        <TabItem Header="FLOPS">
+            <StackPanel Spacing="10" Margin="20">
+                <TextBlock Text="Calculate theoretical compute performance." FontStyle="Italic"/>
+
+                <Label Content="Number of Cores / SMs:"/>
+                <TextBox x:Name="FlopsCoresBox" Watermark="e.g., 16384"/>
+
+                <Label Content="Clock Speed (GHz):"/>
+                <TextBox x:Name="FlopsClockBox" Watermark="e.g., 2.5"/>
+
+                <Label Content="Operations per Clock Cycle:"/>
+                <TextBox x:Name="FlopsOpsBox" Text="2" Watermark="e.g., 2"/>
+
+                <Label Content="Precision:"/>
+                <ComboBox x:Name="FlopsPrecisionCombo" SelectedIndex="1" HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="FP64"/>
+                    <ComboBoxItem Content="FP32"/>
+                    <ComboBoxItem Content="FP16"/>
+                    <ComboBoxItem Content="INT8"/>
+                </ComboBox>
+
+                <Button Content="Calculate TFLOPS" 
+                        Click="OnCalculateFlopsClick" 
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Center"/>
+
+                <TextBlock x:Name="FlopsResultLabel" 
+                           FontSize="16" 
+                           FontWeight="Bold" 
+                           Foreground="Blue"
+                           Margin="0,10,0,0"/>
+            </StackPanel>
+        </TabItem>
+
+        <!-- ========================== -->
+        <!-- TAB 3: TOKENS PER SECOND   -->
+        <!-- ========================== -->
+        <TabItem Header="Tokens/s">
+            <StackPanel Spacing="10" Margin="20">
+                <TextBlock Text="Estimate inference speed &amp; bottleneck." FontStyle="Italic"/>
+
+                <Label Content="TFLOPS (at selected precision):"/>
+                <TextBox x:Name="TpsTflopsBox" Watermark="e.g., 312 (H100 FP16)"/>
+
+                <Label Content="Memory Bandwidth (GB/s):"/>
+                <TextBox x:Name="TpsBandwidthBox" Watermark="e.g., 2039 (H100)"/>
+
+                <Label Content="Parameter Count:"/>
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBox Grid.Column="0" x:Name="TpsParamsBox" Watermark="e.g., 70"/>
+                    <ComboBox Grid.Column="1" x:Name="TpsScaleCombo" SelectedIndex="0" Margin="5,0,0,0">
+                        <ComboBoxItem Content="Billions"/>
+                        <ComboBoxItem Content="Raw"/>
+                    </ComboBox>
+                </Grid>
+
+                <Label Content="Precision:"/>
+                <ComboBox x:Name="TpsPrecisionCombo" SelectedIndex="2" HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="FP32"/>
+                    <ComboBoxItem Content="BF16"/>
+                    <ComboBoxItem Content="FP16"/>
+                    <ComboBoxItem Content="INT8"/>
+                </ComboBox>
+
+                <Button Content="Calculate Tokens/s" 
+                        Click="OnCalculateTokensClick" 
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Center"
+                        Margin="0,10,0,0"/>
+
+                <TextBlock x:Name="TpsResultLabel" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           HorizontalAlignment="Center"
+                           Margin="0,15,0,0"/>
+
+                <TextBlock x:Name="TpsBottleneckLabel" 
+                           FontSize="12" 
+                           FontStyle="Italic"
+                           TextWrapping="Wrap"
+                           HorizontalAlignment="Center"
+                           TextAlignment="Center"
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+        </TabItem>
+        <!-- ========================== -->
+        <!-- TAB 4: TRAINING CALCULATOR    -->
+        <!-- ========================== -->
+        <TabItem Header="Training">
+            <ScrollViewer>
+                <StackPanel Spacing="10" Margin="20">
+                    <TextBlock Text="Estimate training time for a given model and hardware." FontStyle="Italic"/>
+
+                    <!-- HARDWARE GROUP -->
+                    <TextBlock Text="── Hardware ──" FontWeight="Bold" Margin="0,10,0,0"/>
+
+                    <Label Content="TFLOPS (at selected precision):"/>
+                    <TextBox x:Name="TrainTflopsBox" Watermark="e.g., 312 (H100 FP16)"/>
+
+                    <Label Content="Memory Bandwidth (GB/s):"/>
+                    <TextBox x:Name="TrainBandwidthBox" Watermark="e.g., 2039 (H100)"/>
+
+                    <Label Content="VRAM per Device (GB):"/>
+                    <TextBox x:Name="TrainVramBox" Watermark="e.g., 80"/>
+
+                    <Label Content="Number of Devices:"/>
+                    <TextBox x:Name="TrainDevicesBox" Text="1" Watermark="e.g., 8"/>
+
+                    <Label Content="Precision:"/>
+                    <ComboBox x:Name="TrainPrecisionCombo" SelectedIndex="1" HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="FP32"/>
+                        <ComboBoxItem Content="BF16"/>
+                        <ComboBoxItem Content="FP16"/>
+                        <ComboBoxItem Content="INT8"/>
+                    </ComboBox>
+
+                    <!-- MODEL GROUP -->
+                    <TextBlock Text="── Model ──" FontWeight="Bold" Margin="0,10,0,0"/>
+
+                    <Label Content="Parameter Count:"/>
+                    <Grid ColumnDefinitions="*, Auto">
+                        <TextBox Grid.Column="0" x:Name="TrainParamsBox" Watermark="e.g., 7"/>
+                        <ComboBox Grid.Column="1" x:Name="TrainScaleCombo" SelectedIndex="0" Margin="5,0,0,0">
+                            <ComboBoxItem Content="Billions"/>
+                            <ComboBoxItem Content="Raw"/>
+                        </ComboBox>
+                    </Grid>
+
+                    <Label Content="Tokens per Parameter (training target):"/>
+                    <TextBox x:Name="TrainTokensPerParamBox" Watermark="e.g., 20 (Chinchilla optimal)"/>
+
+                    <Label Content="Average Sequence Length (tokens):"/>
+                    <TextBox x:Name="TrainSeqLenBox" Watermark="e.g., 2048"/>
+
+                    <Label Content="Embedding Dimension:"/>
+                    <TextBox x:Name="TrainEmbedDimBox" Watermark="e.g., 4096"/>
+
+                    <Label Content="Layer Count:"/>
+                    <TextBox x:Name="TrainLayerCountBox" Watermark="e.g., 32"/>
+
+                    <Button Content="Estimate Training Time"
+                            Click="OnCalculateTrainingClick"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Center"
+                            Margin="0,10,0,0"/>
+
+                    <!-- RESULTS -->
+                    <TextBlock x:Name="TrainOptimisticLabel"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="Green"
+                            Margin="0,15,0,0"/>
+
+                    <TextBlock x:Name="TrainProbableLabel"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="DodgerBlue"/>
+
+                    <TextBlock x:Name="TrainPessimisticLabel"
+                            FontSize="14"
+                            FontWeight="Bold"
+                            Foreground="OrangeRed"/>
+
+                    <TextBlock x:Name="TrainExplanationLabel"
+                            FontSize="11"
+                            FontStyle="Italic"
+                            TextWrapping="Wrap"
+                            Margin="0,10,0,20"/>
+
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        
+        
+        <!-- ========================== -->
+        <!-- TAB 5: STORAGE CALCULATOR  -->
+        <!-- ========================== -->
+        <TabItem Header="Storage">
+            <StackPanel Spacing="10" Margin="20">
+                <TextBlock Text="Estimate model size on disk." FontStyle="Italic"/>
+
+                <Label Content="Parameter Count:"/>
+                <Grid ColumnDefinitions="*, Auto">
+                    <TextBox Grid.Column="0" x:Name="StorageParamsBox" Watermark="e.g., 8"/>
+                    <ComboBox Grid.Column="1" x:Name="StorageScaleCombo" SelectedIndex="0" Margin="5,0,0,0">
+                        <ComboBoxItem Content="Billions"/>
+                        <ComboBoxItem Content="Raw"/>
+                    </ComboBox>
+                </Grid>
+
+                <Label Content="Precision (Data Type):"/>
+                <ComboBox x:Name="StoragePrecisionCombo" SelectedIndex="2" HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="FP32"/>
+                    <ComboBoxItem Content="BF16"/>
+                    <ComboBoxItem Content="FP16"/>
+                    <ComboBoxItem Content="INT8"/>
+                    <ComboBoxItem Content="FP64"/>
+                </ComboBox>
+
+                <Button Content="Calculate Size" 
+                        Click="OnCalculateStorageClick" 
+                        HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Center"
+                        Margin="0,10,0,0"/>
+
+                <TextBlock x:Name="StorageResultLabel" 
+                           FontSize="16" 
+                           FontWeight="Bold" 
+                           Foreground="Purple"
+                           HorizontalAlignment="Center"
+                           Margin="0,15,0,0"/>
+            </StackPanel>
+        </TabItem>
+
+    </TabControl>
+</Window>
